@@ -31,8 +31,6 @@
         };
       in
         pkgs.runCommandLocal "hello-stamp-symlink" { inherit stamped; } ''
-          set -x
-          ls -ld "$stamped"
           readlink "$stamped" > "$out"
         '';
   };

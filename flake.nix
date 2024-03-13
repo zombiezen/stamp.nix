@@ -39,6 +39,7 @@
         in
           pkgs.runCommandLocal name env ''
             ln -s "$wrapped" "$out"
+            echo "Created symlink $out to $(readlink "$out")"
           '';
     } // flake-utils.lib.eachDefaultSystem (system:
       let
