@@ -31,6 +31,7 @@
         };
       in
         pkgs.runCommandLocal "hello-stamp-symlink" { inherit stamped; } ''
+          echo "Reading $stamped"
           readlink "$stamped" > "$out"
         '';
   };
