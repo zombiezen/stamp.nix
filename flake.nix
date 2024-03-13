@@ -35,6 +35,8 @@
             inherit (wrapped) meta;
 
             passthru.wrapped = wrapped;
+
+            NIX_DEBUG=6;
           };
         in
           pkgs.runCommandLocal name env ''
