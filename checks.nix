@@ -19,16 +19,20 @@
 {
   symlinkContents = pkgs.testers.testEqualContents {
     assertion = "stamp links to the wrapped derivation";
-    expected = pkgs.runCommandLocal "hello-symlink" { x = pkgs.hello; } ''
-      ln -s "$x" "$out"
-    '';
-    actual = self.lib.stamp {
-      inherit pkgs;
-      wrapped = pkgs.hello;
-      sourceInfo = {
-        lastModifiedDate = "20240312204500";
-      };
-    };
+    expected = pkgs.writeText "hello-path" ((builtins.toString pkgs.hello) + "\n");
+    actual =
+      let
+        stamped = self.lib.stamp {
+          inherit pkgs;
+          wrapped = pkgs.hello;
+          sourceInfo = {
+            lastModifiedDate = "20240312204500";
+          };
+        };
+      in
+        pkgs.runCommandLocal "hello-stamp-symlink" { inherit stamped; } ''
+          readlink "$stamped" > "$out"
+        '';
   };
 
   unitTests = pkgs.testers.testEqualContents {
