@@ -17,6 +17,25 @@
 { self, pkgs }:
 
 {
+  symlinkContents = pkgs.testers.testEqualContents {
+    assertion = "stamp links to the wrapped derivation";
+    expected = pkgs.writeText "hello-path" ((builtins.toString pkgs.hello) + "\n");
+    actual =
+      let
+        stamped = self.lib.stamp {
+          inherit pkgs;
+          wrapped = pkgs.hello;
+          sourceInfo = {
+            lastModifiedDate = "20240312204500";
+          };
+        };
+      in
+        pkgs.runCommandLocal "hello-stamp-symlink" { inherit stamped; } ''
+          echo "Reading $stamped"
+          readlink "$stamped" > "$out"
+        '';
+  };
+
   unitTests = pkgs.testers.testEqualContents {
     assertion = "stamp unit tests";
 
